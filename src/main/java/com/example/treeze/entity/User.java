@@ -12,6 +12,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int user_seq;
+
     @Column(name = "user_id", length = 20, nullable = false)
     private String user_id;
+
+    @Column(name = "user_pw", length = 20, nullable = false)
+    private String user_pw;
 }

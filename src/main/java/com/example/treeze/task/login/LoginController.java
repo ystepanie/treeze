@@ -1,7 +1,9 @@
 package com.example.treeze.task.login;
 
+import com.example.treeze.dto.login.LoginDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -11,8 +13,9 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
-    @GetMapping("/first")
-    public Map<String, Object> firstController() throws Exception {
-        return loginService.login();
+    @PostMapping("/login")
+    public Map<String, Object> firstController(@RequestBody LoginDto loginDto) throws Exception {
+        Map<String, Object> result = loginService.login(loginDto);
+        return result;
     }
 }
