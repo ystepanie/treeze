@@ -14,8 +14,8 @@ public class User {
     private int user_seq;
 
     @Column(name = "user_id", length = 20, nullable = false)
-    private String user_id;
+    private String userId;
 
     @Column(name = "user_pw", length = 20, nullable = false)
-    private String user_pw;
+    private String userPw;
 }
