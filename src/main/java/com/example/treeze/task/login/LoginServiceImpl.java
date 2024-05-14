@@ -18,31 +18,35 @@ public class LoginServiceImpl implements LoginService{
     public Map<String, Object> login(LoginDto loginDto) throws Exception{
         Map<String, Object> resultMap = new HashMap<>();
 
-        Map<String, Object> validateLoginResult = validateLogin(loginDto);
-        if("false".equals(validateLoginResult.get("success"))) {
-            resultMap.put("success", false);
-            resultMap.put("message", String.valueOf(validateLoginResult.get("message")));
-            return resultMap;
+        Map<String, Object> validateLoginMap = validateLogin(loginDto);
+        if("failed".equals(String.valueOf(validateLoginMap.get("status")))) {
+            return validateLoginMap;
         }
 
-        User loginUserInfo = findUserInfoByUserIdAndUserPw(loginDto);
-        if(loginUserInfo == null) {
-            resultMap.put("success", false);
-            resultMap.put("message", String.valueOf(validateLoginResult.get("message")));
-            return resultMap;
+        Map<String, Object> loginUserInfoMap = findUserInfoByUserIdAndUserPw(loginDto);
+        if("failed".equals(String.valueOf(loginUserInfoMap.get("status")))) {
+            return loginUserInfoMap;
         }
 
-        resultMap.put("success", true);
+        resultMap.put("status", "success");
         resultMap.put("message", "로그인에 성공하였습니다.");
-        resultMap.put("loginUserInfo", loginUserInfo);
-
+        resultMap.put("data", loginUserInfoMap.get("userInfo"));
         return resultMap;
     }
 
     @Override
-    public User findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
+    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
         User userInfo = userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw());
-        return userInfo;
+        if(userInfo == null) {
+            resultMap.put("status", "failed");
+            resultMap.put("message", "아이디 및 패스워드를 확인해주세요.");
+            return resultMap;
+        }
+
+        resultMap.put("status", "success");
+        resultMap.put("userInfo", userInfo);
+        return resultMap;
     }
 
     @Override
@@ -52,18 +56,18 @@ public class LoginServiceImpl implements LoginService{
         String userPw = loginDto.userPw();
 
         if(userId.isEmpty()) {
-            resultMap.put("success", false);
+            resultMap.put("status", "failed");
             resultMap.put("message", "아이디를 입력해주세요.");
             return resultMap;
         }
 
         if(userPw.isEmpty()) {
-            resultMap.put("success", false);
+            resultMap.put("status", "failed");
             resultMap.put("message", "비밀번호를 입력해주세요.");
             return resultMap;
         }
 
-        resultMap.put("success", true);
+        resultMap.put("status", "success");
         return resultMap;
     }
 }
