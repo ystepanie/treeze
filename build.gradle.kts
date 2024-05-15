@@ -36,6 +36,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	testImplementation("org.springframework.security:spring-security-test")
+	// JWT Token
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+
 }
 
 tasks.withType<Test> {
