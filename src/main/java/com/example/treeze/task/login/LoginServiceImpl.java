@@ -3,71 +3,81 @@ package com.example.treeze.task.login;
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.entity.User;
 import com.example.treeze.repository.UserRepository;
+import com.example.treeze.security.AccessJwtToken;
+import com.example.treeze.util.CalendarUtil;
+import com.example.treeze.vo.login.LoginVo;
+import com.example.treeze.vo.login.TokenVo;
+import com.example.treeze.vo.login.UserVo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class LoginServiceImpl implements LoginService{
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    AccessJwtToken accessJwtToken;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     public Map<String, Object> login(LoginDto loginDto) throws Exception{
-        Map<String, Object> resultMap = new HashMap<>();
-
-        Map<String, Object> validateLoginMap = validateLogin(loginDto);
-        if("failed".equals(String.valueOf(validateLoginMap.get("status")))) {
-            return validateLoginMap;
-        }
-
         Map<String, Object> loginUserInfoMap = findUserInfoByUserIdAndUserPw(loginDto);
         if("failed".equals(String.valueOf(loginUserInfoMap.get("status")))) {
             return loginUserInfoMap;
         }
 
+        Map<String, Object> tokenMap = generateTokenInfo(loginDto);
+
+        UserVo userInfo = (UserVo) loginUserInfoMap.get("userInfo");
+        TokenVo tokenInfo = (TokenVo) tokenMap.get("tokenInfo");
+        LoginVo loginInfo = new LoginVo(userInfo, tokenInfo);
+
+        Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", "success");
         resultMap.put("message", "로그인에 성공하였습니다.");
-        resultMap.put("data", loginUserInfoMap.get("userInfo"));
+        resultMap.put("data", loginInfo);
         return resultMap;
     }
 
     @Override
-    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
-        Map<String, Object> resultMap = new HashMap<>();
+    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginxDto) throws Exception {
         User userInfo = userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw());
+
         if(userInfo == null) {
-            resultMap.put("status", "failed");
-            resultMap.put("message", "아이디 및 패스워드를 확인해주세요.");
-            return resultMap;
+            Map<String, Object> resultFailMap = new HashMap<>();
+            resultFailMap.put("status", "failed");
+            resultFailMap.put("message", "아이디 및 패스워드를 확인해주세요.");
+            return resultFailMap;
         }
 
+        UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId());
+
+        Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", "success");
-        resultMap.put("userInfo", userInfo);
+        resultMap.put("userInfo", userInfoVo);
         return resultMap;
     }
 
     @Override
-    public Map<String, Object> validateLogin(LoginDto loginDto) throws Exception {
+    public Map<String, Object> generateTokenInfo(LoginDto loginDto) throws Exception {
+        String accessToken = accessJwtToken.generateAccessToken(loginDto);
+        String refreshToken = UUID.randomUUID().toString();
+        String expiration = CalendarUtil.getAddDayDatetime(1); // 토큰 만료 시간
+
+        TokenVo tokenInfoVo = new TokenVo(accessToken, refreshToken, expiration);
+
         Map<String, Object> resultMap = new HashMap<>();
-        String userId = loginDto.userId();
-        String userPw = loginDto.userPw();
-
-        if(userId.isEmpty()) {
-            resultMap.put("status", "failed");
-            resultMap.put("message", "아이디를 입력해주세요.");
-            return resultMap;
-        }
-
-        if(userPw.isEmpty()) {
-            resultMap.put("status", "failed");
-            resultMap.put("message", "비밀번호를 입력해주세요.");
-            return resultMap;
-        }
-
         resultMap.put("status", "success");
+        resultMap.put("tokenInfo", tokenInfoVo);
         return resultMap;
     }
 }

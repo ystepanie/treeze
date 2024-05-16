@@ -9,5 +9,6 @@ public interface LoginService {
 
     public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception;
 
-    public Map<String, Object> validateLogin(LoginDto loginDto) throws Exception;
+    public Map<String, Object> generateTokenInfo(LoginDto loginDto) throws Exception;
+
 }

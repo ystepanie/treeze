@@ -38,6 +38,12 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	// JWT Token
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	// Model mapper
+	implementation("org.modelmapper:modelmapper:3.0.0")
+	// xml bind
+	implementation("javax.xml.bind:jaxb-api:2.3.1")
+	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+	implementation("javax.activation:activation:1.1.1")
 
 }
 

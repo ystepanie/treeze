@@ -1,4 +1,6 @@
 package com.example.treeze.vo.login;
 
-public class LoginVo {
-}
+public record LoginVo(
+    UserVo userVo,
+    TokenVo tokenVo
+) {}
