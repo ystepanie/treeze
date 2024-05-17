@@ -1,8 +1,10 @@
 package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
+import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.User;
 import com.example.treeze.repository.UserRepository;
+import com.example.treeze.response.Response;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.vo.login.LoginVo;
@@ -49,7 +51,7 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginxDto) throws Exception {
+    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
         User userInfo = userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw());
 
         if(userInfo == null) {
@@ -80,4 +82,33 @@ public class LoginServiceImpl implements LoginService{
         resultMap.put("tokenInfo", tokenInfoVo);
         return resultMap;
     }
+
+    @Override
+    public Map<String, Object> signup(SignupDto signupDto) throws Exception {
+        User userInfo = userRepository.findByUserId(signupDto.userId());
+        if(userInfo != null) {
+            Map<String, Object> resultFailMap = new HashMap<>();
+            resultFailMap.put("status", "failed");
+            resultFailMap.put("message", "이미 존재하는 아이디입니다.");
+            return resultFailMap;
+        }
+
+        Map<String, Object> registMap = registUser(signupDto);
+
+
+    }
+
+    @Override
+    public Map<String, Object> registUser(SignupDto signupDto) throws Exception {
+        User user = new User();
+        user.setUserId(signupDto.userId());
+        user.setUserPw(signupDto.userPw());
+        user.setPhoneNumber(signupDto.phoneNumber());
+        User saveUser = userRepository.save(user);
+        if(saveUser == null || saveUser.getUserSeq() == null) {
+
+        }
+    }
+
+
 }

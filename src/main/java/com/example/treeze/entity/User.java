@@ -18,4 +18,7 @@ public class User {
 
     @Column(name = "user_pw", length = 20, nullable = false)
     private String userPw;
+
+    @Column(name = "phone_number", length = 15, nullable = false)
+    private String phoneNumber;
 }
