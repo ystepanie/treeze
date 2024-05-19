@@ -4,7 +4,6 @@ import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.User;
 import com.example.treeze.repository.UserRepository;
-import com.example.treeze.response.Response;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.vo.login.LoginVo;
@@ -94,7 +93,7 @@ public class LoginServiceImpl implements LoginService{
         }
 
         Map<String, Object> registMap = registUser(signupDto);
-
+        return registMap;
 
     }
 
@@ -105,9 +104,17 @@ public class LoginServiceImpl implements LoginService{
         user.setUserPw(signupDto.userPw());
         user.setPhoneNumber(signupDto.phoneNumber());
         User saveUser = userRepository.save(user);
-        if(saveUser == null || saveUser.getUserSeq() == null) {
-
+        System.out.println(saveUser);
+        if(saveUser.getUserSeq() == 0) {
+            Map<String, Object> resultFailMap = new HashMap<String, Object>();
+            resultFailMap.put("status", "failed");
+            resultFailMap.put("message", "회원가입에 실패하였습니다.");
         }
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("status", "success");
+        resultMap.put("message", "성공적으로 회원가입 되었습니다.");
+        resultMap.put("user", saveUser);
+        return resultMap;
     }
 
 
