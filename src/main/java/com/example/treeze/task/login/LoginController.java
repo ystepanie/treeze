@@ -3,12 +3,13 @@ package com.example.treeze.task.login;
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.response.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 @RestController
@@ -16,13 +17,11 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+    final Logger log = LogManager.getLogger(getClass());
+
     @PostMapping("/login")
     public Response postLogin(@RequestBody LoginDto loginDto) throws Exception {
-        Map<String, Object> result = loginService.login(loginDto);
-        String status = result.get("status").toString();
-        String message = result.get("message").toString();
-        Object data = result.get("data");
-        return new Response(status, message, data);
+        return loginService.login(loginDto);
     }
 
     @PostMapping("/signup")
@@ -31,8 +30,9 @@ public class LoginController {
         String userPw = signupDto.userPw();
         String userPwConfirm = signupDto.userPwConfirm();
         String phoneNumber = signupDto.phoneNumber();
-        System.out.println("userId="+userId+",userPw="+userPw+
-                ",userPwConfirm="+userPwConfirm+",phoneNumber="+phoneNumber);
+        log.debug("userId={}",userId,",userPw={}",userPw,
+                ",userPwConfirm={}",userPwConfirm,",phoneNumber={}",phoneNumber);
+
         if(!userPw.equals(userPwConfirm)) {
             return new Response("failed", "비밀번호 확인값이 서로 다릅니다.");
         }
@@ -49,10 +49,6 @@ public class LoginController {
             return new Response("failed", "휴대폰 번호를 확인해 주세요.");
         }
 
-        Map<String, Object> result = loginService.signup(signupDto);
-        String status = result.get("status").toString();
-        String message = result.get("message").toString();
-        Object data = result.get("data");
-        return new Response(status, message, data);
+        return loginService.signup(signupDto);
     }
 }

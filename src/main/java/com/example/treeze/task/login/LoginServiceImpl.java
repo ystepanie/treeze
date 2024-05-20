@@ -3,7 +3,11 @@ package com.example.treeze.task.login;
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.User;
+import com.example.treeze.exception.TokenNotFoundException;
+import com.example.treeze.exception.UserDuplicateException;
+import com.example.treeze.exception.UserNotFoundException;
 import com.example.treeze.repository.UserRepository;
+import com.example.treeze.response.Response;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.vo.login.LoginVo;
@@ -14,8 +18,6 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,91 +32,65 @@ public class LoginServiceImpl implements LoginService{
     private EntityManager entityManager;
 
     @Override
-    public Map<String, Object> login(LoginDto loginDto) throws Exception{
-        Map<String, Object> loginUserInfoMap = findUserInfoByUserIdAndUserPw(loginDto);
-        if("failed".equals(String.valueOf(loginUserInfoMap.get("status")))) {
-            return loginUserInfoMap;
-        }
-
-        Map<String, Object> tokenMap = generateTokenInfo(loginDto);
-
-        UserVo userInfo = (UserVo) loginUserInfoMap.get("userInfo");
-        TokenVo tokenInfo = (TokenVo) tokenMap.get("tokenInfo");
+    public Response login(LoginDto loginDto) throws Exception{
+        UserVo userInfo = findUserInfoByUserIdAndUserPw(loginDto);
+        TokenVo tokenInfo = generateTokenInfo(loginDto);
         LoginVo loginInfo = new LoginVo(userInfo, tokenInfo);
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("status", "success");
-        resultMap.put("message", "로그인에 성공하였습니다.");
-        resultMap.put("data", loginInfo);
-        return resultMap;
+        return new Response("success", "로그인에 성공하였습니다.", loginInfo);
     }
 
     @Override
-    public Map<String, Object> findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
+    public UserVo findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
         User userInfo = userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw());
-
-        if(userInfo == null) {
-            Map<String, Object> resultFailMap = new HashMap<>();
-            resultFailMap.put("status", "failed");
-            resultFailMap.put("message", "아이디 및 패스워드를 확인해주세요.");
-            return resultFailMap;
+        if(userInfo == null){
+            throw new UserNotFoundException("아이디, 비밀번호를 확인해주세요.");
         }
-
         UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId());
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("status", "success");
-        resultMap.put("userInfo", userInfoVo);
-        return resultMap;
+        return userInfoVo;
     }
 
     @Override
-    public Map<String, Object> generateTokenInfo(LoginDto loginDto) throws Exception {
+    public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception {
         String accessToken = accessJwtToken.generateAccessToken(loginDto);
         String refreshToken = UUID.randomUUID().toString();
         String expiration = CalendarUtil.getAddDayDatetime(1); // 토큰 만료 시간
 
         TokenVo tokenInfoVo = new TokenVo(accessToken, refreshToken, expiration);
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("status", "success");
-        resultMap.put("tokenInfo", tokenInfoVo);
-        return resultMap;
-    }
-
-    @Override
-    public Map<String, Object> signup(SignupDto signupDto) throws Exception {
-        User userInfo = userRepository.findByUserId(signupDto.userId());
-        if(userInfo != null) {
-            Map<String, Object> resultFailMap = new HashMap<>();
-            resultFailMap.put("status", "failed");
-            resultFailMap.put("message", "이미 존재하는 아이디입니다.");
-            return resultFailMap;
+        if(accessToken == null || refreshToken == null || expiration == null){
+            throw new TokenNotFoundException("토큰 생성에 실패하였습니다.");
         }
-
-        Map<String, Object> registMap = registUser(signupDto);
-        return registMap;
-
+        return tokenInfoVo;
     }
 
     @Override
-    public Map<String, Object> registUser(SignupDto signupDto) throws Exception {
+    public Response signup(SignupDto signupDto) throws Exception {
+        duplicateValidationUserId(signupDto);
+        UserVo registMap = registUser(signupDto);
+        return new Response("success", "회원가입에 성공하였습니다.");
+    }
+
+    @Override
+    public void duplicateValidationUserId(SignupDto signupDto) throws Exception {
+        User userInfo = userRepository.findByUserId(signupDto.userId());
+        if(userInfo != null){
+            throw new UserDuplicateException("이미 등록된 아이디입니다.");
+        }
+    }
+
+    @Override
+    public UserVo registUser(SignupDto signupDto) throws Exception {
         User user = new User();
         user.setUserId(signupDto.userId());
         user.setUserPw(signupDto.userPw());
         user.setPhoneNumber(signupDto.phoneNumber());
         User saveUser = userRepository.save(user);
-        System.out.println(saveUser);
-        if(saveUser.getUserSeq() == 0) {
-            Map<String, Object> resultFailMap = new HashMap<String, Object>();
-            resultFailMap.put("status", "failed");
-            resultFailMap.put("message", "회원가입에 실패하였습니다.");
+
+        if(saveUser == null || saveUser.getUserSeq() == 0){
+            throw new UserNotFoundException("회원가입에 실패하였습니다.");
         }
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("status", "success");
-        resultMap.put("message", "성공적으로 회원가입 되었습니다.");
-        resultMap.put("user", saveUser);
-        return resultMap;
+        UserVo userVo = new UserVo(saveUser.getUserSeq(), saveUser.getUserId());
+
+        return userVo;
     }
 
 
