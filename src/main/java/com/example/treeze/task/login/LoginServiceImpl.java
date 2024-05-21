@@ -13,23 +13,17 @@ import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.vo.login.LoginVo;
 import com.example.treeze.vo.login.TokenVo;
 import com.example.treeze.vo.login.UserVo;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    AccessJwtToken accessJwtToken;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final AccessJwtToken accessJwtToken;
 
     @Override
     public Response login(LoginDto loginDto) throws Exception{
