@@ -2,33 +2,42 @@ package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.entity.User;
+import com.example.treeze.exception.UserNotFoundException;
 import com.example.treeze.repository.UserRepository;
 import com.example.treeze.security.AccessJwtToken;
+import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.vo.login.LoginVo;
 import com.example.treeze.vo.login.TokenVo;
 import com.example.treeze.vo.login.UserVo;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@RequiredArgsConstructor
 class LoginServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AccessJwtToken accessJwtToken;
+
+    @InjectMocks
     private LoginServiceImpl loginService;
+
+    private LoginDto loginDto;
 
     @BeforeEach
     void setUp() {
-        loginService = new LoginServiceImpl(userRepository, new AccessJwtToken());
+        loginDto = new LoginDto("id1", "pw1");
+        mockStatic(CalendarUtil.class);
     }
 
     @Test
@@ -48,8 +57,6 @@ class LoginServiceTest {
     @Test
     void findUserInfoByUserIdAndUserPw_success() throws Exception {
         //given
-        LoginDto loginDto = new LoginDto("id1", "pw1");
-
         User user = new User();
         user.setUserSeq(1);
         user.setUserId("id1");
@@ -65,7 +72,29 @@ class LoginServiceTest {
     }
 
     @Test
-    void generateTokenInfo() {
+    void findUserInfoByUserIdAndUserPw_failed() throws Exception {
+        //given
+        //when
+        when(userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw())).thenReturn(null);
+        //then
+        assertThrows(UserNotFoundException.class, () -> loginService.findUserInfoByUserIdAndUserPw(loginDto));
+    }
+
+    @Test
+    void generateTokenInfo_success() throws Exception {
+        //given
+        String accessTokenValue = "accessTokenValue";
+        String refreshTokenValue = "refreshTokenValue";
+        String expiresInValue = "2024-01-01";
+        given(accessJwtToken.generateAccessToken(loginDto)).willReturn(accessTokenValue);
+        given(CalendarUtil.getAddDayDatetime(1)).willReturn(expiresInValue);
+        //when
+        TokenVo tokenVo = loginService.generateTokenInfo(loginDto);
+        //then
+        assertNotNull(tokenVo);
+        assertNotNull(tokenVo.accessToken());
+        assertNotNull(tokenVo.refreshToken());
+        assertNotNull(tokenVo.expiration());
     }
 
     @Test

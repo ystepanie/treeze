@@ -46,6 +46,8 @@ dependencies {
 	implementation("javax.activation:activation:1.1.1")
 	// lombok
 	implementation("org.projectlombok:lombok")
+	// powermock
+	testImplementation("org.mockito:mockito-inline:3.7.7")
 }
 
 tasks.withType<Test> {
