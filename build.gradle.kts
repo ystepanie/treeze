@@ -25,7 +25,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	// Hibernate
@@ -45,9 +44,14 @@ dependencies {
 	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
 	implementation("javax.activation:activation:1.1.1")
 	// lombok
+	annotationProcessor("org.projectlombok:lombok")
 	implementation("org.projectlombok:lombok")
 	// powermock
 	testImplementation("org.mockito:mockito-inline:3.7.7")
+	// junit5
+	testImplementation(platform("org.junit:junit-bom:5.8.2"))
+	testImplementation("org.junit.jupiter:junit-jupiter-api")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 tasks.withType<Test> {
