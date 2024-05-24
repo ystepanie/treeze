@@ -43,7 +43,7 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception {
+        public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception {
         String accessToken = accessJwtToken.generateAccessToken(loginDto);
         String refreshToken = UUID.randomUUID().toString();
         String expiration = CalendarUtil.getAddDayDatetime(1); // 토큰 만료 시간
