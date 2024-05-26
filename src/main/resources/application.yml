@@ -8,8 +8,10 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: none # 운영시에는 validate 추천
+      ddl-auto: none
       show-sql: true
-      format_sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MariaDBDialect
 server:
   port: 8181
