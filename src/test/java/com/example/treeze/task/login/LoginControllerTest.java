@@ -42,14 +42,14 @@ class LoginControllerTest {
         user = new User();
         user.setUserSeq(1);
         user.setUserId("id1");
-        user.setUserPw("pw1");
+        user.setUserPw("Testtest123!");
         user.setPhoneNumber("010-1234-5678");
 
-        loginDto = new LoginDto("id1", "pw1");
+        loginDto = new LoginDto("id1", "Testtest123!");
 
         userVo = new UserVo(1, "id1");
         tokenVo = new TokenVo("accessToken", "refreshToken", "2024-01-01");
-        signupDto = new SignupDto("id1", "ValidPass1!", "ValidPass1!", "010-7643-0423");
+        signupDto = new SignupDto("id1", "Testtest123!", "Testtest123!", "010-7643-0423");
     }
 
     @Test

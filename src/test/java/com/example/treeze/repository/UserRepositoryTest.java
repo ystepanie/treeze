@@ -110,16 +110,4 @@ public class UserRepositoryTest {
         assertThat(saveUser.getUserPw()).isEqualTo("saveUserPw1!");
         assertThat(saveUser.getPhoneNumber()).isEqualTo("010-1234-5678");
     }
-
-//    @Test
-//    void save_failed() {
-//        //given
-//        User invalidUser = new User();
-//        invalidUser.setUserId("saveUser");
-//        invalidUser.setPhoneNumber("010-1234-5678");
-//        //when
-//        //then
-//        assertThatThrownBy(() -> userRepository.save(invalidUser))
-//                .isInstanceOf(ConstraintViolationException.class);
-//    }
 }
