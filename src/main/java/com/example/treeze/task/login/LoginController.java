@@ -25,9 +25,6 @@ public class LoginController {
 
     @PostMapping("/signup")
     public Response postSignup(@Valid @RequestBody SignupDto signupDto) throws Exception {
-        String userPassword = signupDto.userPw();
-        String userPasswordConfirm = signupDto.userPwConfirm();
-
         return loginService.signup(signupDto);
     }
 }

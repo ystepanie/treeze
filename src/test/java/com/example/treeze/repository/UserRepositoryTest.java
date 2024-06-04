@@ -30,12 +30,6 @@ public class UserRepositoryTest {
     @Test
     void findByUserIdAndUserPw_success() {
         //given
-        User user = new User();
-        user.setUserId("id1");
-        user.setUserPw("Testtest123!");
-        user.setPhoneNumber("010-1234-5678");
-        userRepository.save(user);
-
         String userId = "id1";
         String userPw = "Testtest123!";
         //when
@@ -66,12 +60,6 @@ public class UserRepositoryTest {
     @Test
     void findByUserId_success() {
         //given
-        User user = new User();
-        user.setUserId("id1");
-        user.setUserPw("Testtest123!");
-        user.setPhoneNumber("010-1234-5678");
-        userRepository.save(user);
-
         String userId = "id1";
         //when
         User findUser = userRepository.findByUserId(userId);
