@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.is;
@@ -38,12 +39,14 @@ public class LoginControllerTest {
     private LoginDto validLoginDto;
     private LoginDto invalidLoginDto;
     private SignupDto validSignupDto;
+    private SignupDto invalidSignupDto;
 
     @BeforeEach
     public void setUp() {
         validLoginDto = new LoginDto("ystepanie", "Ystep950830!");
         invalidLoginDto = new LoginDto("id", "short");
         validSignupDto = new SignupDto("test123", "Testtest123!", "Testtest123!", "010-1234-5678");
+        invalidSignupDto = new SignupDto("ystepanie", "Ystep950830!","Ystep950830!", "010-1234-5678");
     }
 
     @Test
@@ -83,7 +86,24 @@ public class LoginControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequestBody))
-                .andExpect(status().isOk());
+                        .andExpect(status().isOk());
+        // then
+    }
+
+    @Test
+    void 회원가입_동일아이디() throws Exception {
+        // given
+        String invalidRequestBody = objectMapper.writeValueAsString(invalidSignupDto);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(post("/signup")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequestBody))
+                        .andReturn();
+        // 응답 본문 확인
+        String responseString = mvcResult.getResponse().getContentAsString();
+        System.out.println("response : " + responseString);
         // then
     }
 }

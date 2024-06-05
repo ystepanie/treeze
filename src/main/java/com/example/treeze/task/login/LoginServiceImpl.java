@@ -58,8 +58,8 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public Response signup(SignupDto signupDto) throws Exception {
         duplicateValidationUserId(signupDto);
-        UserVo registMap = registUser(signupDto);
-        return new Response("success", MessageUtil.SIGNUP_SUCCESS);
+        UserVo userVo = registUser(signupDto);
+        return new Response("success", MessageUtil.SIGNUP_SUCCESS, userVo);
     }
 
     @Override
