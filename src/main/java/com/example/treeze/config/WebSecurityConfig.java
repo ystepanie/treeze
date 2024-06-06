@@ -18,7 +18,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) 
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/signup", "/login").permitAll()
+                        .requestMatchers("/v1/login/signup", "/v1/login/login").permitAll()
                         .anyRequest().authenticated())
                 .logout(logout -> logout.permitAll());  // 로그아웃도 모든 사용자에게 허용
         return http.build();
