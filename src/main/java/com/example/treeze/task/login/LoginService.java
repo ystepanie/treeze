@@ -9,11 +9,15 @@ import com.example.treeze.vo.login.UserVo;
 public interface LoginService {
     public Response login(LoginDto loginDto) throws Exception;
 
-    public UserVo findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception;
+    public void passwordMatch(String userPassword, String encUserPassword) throws Exception;
+
+    public UserVo findUserInfoByUserId(String userId) throws Exception;
 
     public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception;
 
     public Response signup(SignupDto signupDto) throws Exception;
+
+    public SignupDto signupEncoding(SignupDto signupDto) throws Exception;
 
     public void duplicateValidationUserId(SignupDto signupDto) throws Exception;
 

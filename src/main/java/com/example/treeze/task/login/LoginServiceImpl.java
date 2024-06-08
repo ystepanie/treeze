@@ -13,6 +13,7 @@ import com.example.treeze.vo.login.LoginVo;
 import com.example.treeze.vo.login.TokenVo;
 import com.example.treeze.vo.login.UserVo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -23,27 +24,41 @@ public class LoginServiceImpl implements LoginService{
 
     private final UserRepository userRepository;
     private final AccessJwtToken accessJwtToken;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Response login(LoginDto loginDto) throws Exception{
-        UserVo userInfo = findUserInfoByUserIdAndUserPw(loginDto);
+        String userId = loginDto.userId();
+        String userPw = loginDto.userPw();
+
+        UserVo userInfo = findUserInfoByUserId(userId);
+        String encUserPw = userInfo.userPw();
+
+        passwordMatch(userPw, encUserPw);
         TokenVo tokenInfo = generateTokenInfo(loginDto);
         LoginVo loginInfo = new LoginVo(userInfo, tokenInfo);
         return new Response("success", MessageUtil.LOGIN_SUCCESS, loginInfo);
     }
 
     @Override
-    public UserVo findUserInfoByUserIdAndUserPw(LoginDto loginDto) throws Exception {
-        User userInfo = userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw());
+    public void passwordMatch(String userPassword, String encUserPassword) throws Exception {
+        if (!passwordEncoder.matches(userPassword, encUserPassword)) {
+            throw new LoginException(MessageUtil.DIFF_PASSWORD);
+        }
+    }
+
+    @Override
+    public UserVo findUserInfoByUserId(String usreId) throws Exception {
+        User userInfo = userRepository.findByUserId(usreId);
         if(userInfo == null){
             throw new LoginException(MessageUtil.USER_NOT_EXIST);
         }
-        UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId());
+        UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId(), userInfo.getUserPw());
         return userInfoVo;
     }
 
     @Override
-        public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception {
+    public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception {
         String accessToken = accessJwtToken.generateAccessToken(loginDto);
         String refreshToken = UUID.randomUUID().toString();
         String expiration = CalendarUtil.getAddDayDatetime(1); // 토큰 만료 시간
@@ -57,9 +72,22 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public Response signup(SignupDto signupDto) throws Exception {
-        duplicateValidationUserId(signupDto);
-        UserVo userVo = registUser(signupDto);
+        SignupDto encodingSignupDto = signupEncoding(signupDto);
+        duplicateValidationUserId(encodingSignupDto);
+        UserVo userVo = registUser(encodingSignupDto);
         return new Response("success", MessageUtil.SIGNUP_SUCCESS, userVo);
+    }
+
+    @Override
+    public SignupDto signupEncoding(SignupDto signupDto) throws Exception {
+        SignupDto encodingSignupDto = SignupDto.builder()
+                .userId(signupDto.userId())
+                .userPw(passwordEncoder.encode(signupDto.userPw()))
+                .userPwConfirm(signupDto.userPwConfirm())
+                .phoneNumber(signupDto.phoneNumber())
+                .build();
+
+        return encodingSignupDto;
     }
 
     @Override
@@ -80,7 +108,11 @@ public class LoginServiceImpl implements LoginService{
         if(saveUser == null || saveUser.getUserSeq() == 0){
             throw new LoginException(MessageUtil.SIGNUP_FAILED);
         }
-        UserVo userVo = new UserVo(saveUser.getUserSeq(), saveUser.getUserId());
+
+        UserVo userVo = UserVo.builder()
+                .userSeq(saveUser.getUserSeq())
+                .userId(saveUser.getUserId())
+                .build();
 
         return userVo;
     }

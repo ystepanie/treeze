@@ -1,5 +1,6 @@
 package com.example.treeze.annotation.login;
 
+import com.example.treeze.util.MessageUtil;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -12,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordConfirmValidate {
-    String message() default "비밀번호 확인값이 서로 다릅니다.";
+    String message() default MessageUtil.OTHER_PASSWORD;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

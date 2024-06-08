@@ -8,7 +8,6 @@ import com.example.treeze.repository.UserRepository;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.util.MessageUtil;
-import com.example.treeze.vo.login.LoginVo;
 import com.example.treeze.vo.login.TokenVo;
 import com.example.treeze.vo.login.UserVo;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.stream.Stream;
 
@@ -32,12 +32,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class LoginServiceTest {
+class LoginServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
     @Mock
     private AccessJwtToken accessJwtToken;
+
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
     private LoginServiceImpl loginServiceImpl;
@@ -62,42 +65,45 @@ class LoginServiceTest {
 
     @Test
     void login() { // 객체를 전달해주는 역할만 하는 녀석을 굳이 단위테스트할 필요가 있을까..?
+    }
+    
+    @Test
+    void passwordMatch_failed() throws Exception {
         //given
-        UserVo userVo = new UserVo(2, "ystepanie2");
-        TokenVo tokenVo = new TokenVo("accessToken1", "refreshToken1", "2024-01-01");
-        LoginVo loginVo = new LoginVo(userVo, tokenVo);
+        String userPassword = "pw1";
+        String encUserPassword = "encPw1";
+
         //when
+        when(passwordEncoder.matches(userPassword, encUserPassword)).thenReturn(false);
 
         //then
-        assertNotNull(userVo, "userVo not null");
-        assertNotNull(tokenVo, "tokenVo not null");
-        assertNotNull(loginVo, "loginVo not null");
+        LoginException loginException = assertThrows(LoginException.class, () -> loginServiceImpl.passwordMatch(userPassword, encUserPassword));
+        assertEquals(loginException.getMessage(), MessageUtil.DIFF_PASSWORD);
     }
 
     @Test
-    void findUserInfoByUserIdAndUserPw_success() throws Exception {
+    void findUserInfoByUserId_success() throws Exception {
         //given
         User user = new User();
         user.setUserSeq(1);
         user.setUserId("id1");
 
-        when(userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw())).thenReturn(user);
+        when(userRepository.findByUserId(loginDto.userId())).thenReturn(user);
         //when
-        UserVo info = loginServiceImpl.findUserInfoByUserIdAndUserPw(loginDto);
+        UserVo info = loginServiceImpl.findUserInfoByUserId(loginDto.userId());
         //then
-        System.out.println(info);
         assertNotNull(info);
         assertEquals(1, info.userSeq());
         assertEquals("id1", info.userId());
     }
 
     @Test
-    void findUserInfoByUserIdAndUserPw_nullException() throws Exception {
+    void findUserInfoByUserId_nullException() throws Exception {
         //given
         //when
-        when(userRepository.findByUserIdAndUserPw(loginDto.userId(), loginDto.userPw())).thenReturn(null);
+        when(userRepository.findByUserId(loginDto.userId())).thenReturn(null);
         //then
-        assertThrows(LoginException.class, () -> loginServiceImpl.findUserInfoByUserIdAndUserPw(loginDto));
+        assertThrows(LoginException.class, () -> loginServiceImpl.findUserInfoByUserId(loginDto.userId()));
     }
 
     @Test

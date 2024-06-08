@@ -5,8 +5,10 @@ import com.example.treeze.util.MessageUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 @PasswordConfirmValidate(passwordField = "userPw", confirmPasswordField = "userPwConfirm")
+@Builder
 public record SignupDto(
         @NotBlank(message = MessageUtil.BLANK_ID)
         @Size(min = 4, max = 15, message = MessageUtil.INVALID_LENGTH_ID)

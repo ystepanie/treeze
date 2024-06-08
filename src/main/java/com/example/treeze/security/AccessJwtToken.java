@@ -20,7 +20,7 @@ public class AccessJwtToken {
         try {
             Map<String, Object> headers = new HashMap<>();
             headers.put("typ", "JWT");
-            headers.put("alg", "HS512");
+            headers.put("alg", "HS256");
 
             Map<String, Object> claims = new HashMap<>();
             claims.put("userId", user.userId());

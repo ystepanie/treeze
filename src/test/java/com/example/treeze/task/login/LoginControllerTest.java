@@ -45,7 +45,7 @@ public class LoginControllerTest {
     @Test
     void 로그인_성공() throws Exception {
         // given
-        LoginDto validLoginDto = new LoginDto("validUser", "validPw!");
+        LoginDto validLoginDto = new LoginDto("validUser", "validPw1!");
         String validRequestBody = objectMapper.writeValueAsString(validLoginDto);
         Response successResponse = new Response(successStatus, MessageUtil.LOGIN_SUCCESS, "data");
         when(loginService.login(validLoginDto)).thenReturn(successResponse);
@@ -67,7 +67,7 @@ public class LoginControllerTest {
     @Test
     void 로그인_유저존재하지않음() throws Exception {
         // given
-        LoginDto invalidLoginDto = new LoginDto("invalidUser", "invalidPw!");
+        LoginDto invalidLoginDto = new LoginDto("invalidUser", "invalidPw1!");
         String validRequestBody = objectMapper.writeValueAsString(invalidLoginDto);
         when(loginService.login(invalidLoginDto)).thenThrow(new LoginException(MessageUtil.USER_NOT_EXIST));
 
@@ -89,32 +89,46 @@ public class LoginControllerTest {
     @Test
     void 회원가입_성공() throws Exception {
         // given
-        SignupDto validSignupDto = new SignupDto("ystepanie3", "Ystep950830!", "Ystep950830!",
+        SignupDto validSignupDto = new SignupDto("test1", "Test123!", "Test123!",
                 "010-1234-5678");
         String validRequestBody = objectMapper.writeValueAsString(validSignupDto);
+        Response successResponse = new Response(successStatus, MessageUtil.SIGNUP_SUCCESS);
+        when(loginService.signup(validSignupDto)).thenReturn(successResponse);
 
         // when
-        mockMvc.perform(post("/v1/login/signup")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequestBody))
-                        .andExpect(status().isOk());
+        MvcResult mvcResult = mockMvc.perform(post("/v1/login/signup")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(validRequestBody))
+                .andExpect(status().isOk())
+                .andReturn();
         // then
+        String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Response result = objectMapper.readValue(jsonResponse, Response.class);
+        assertThat(result.status()).isEqualTo(successStatus);
+        assertThat(result.message()).isEqualTo(MessageUtil.SIGNUP_SUCCESS);
     }
 
     @Test
     void 회원가입_동일아이디() throws Exception {
         // given
-        SignupDto invalidSignupDto = new SignupDto("ystepanie", "Ystep950830!", "Ystep950830!",
+        SignupDto invalidSignupDto = new SignupDto("test1", "Test123!", "Test123!",
                 "010-1234-5678");
         String invalidRequestBody = objectMapper.writeValueAsString(invalidSignupDto);
+        Response failedResponse = new Response(failedStatus, MessageUtil.USER_ALREADY_EXIST);
+        when(loginService.signup(invalidSignupDto)).thenReturn(failedResponse);
 
         // when
-        mockMvc.perform(post("/v1/login/signup")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidRequestBody))
-                        .andExpect(status().isOk());
+        MvcResult mvcResult = mockMvc.perform(post("/v1/login/signup")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequestBody))
+                .andExpect(status().isOk())
+                .andReturn();
         // then
+        String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Response result = objectMapper.readValue(jsonResponse, Response.class);
+        assertThat(result.status()).isEqualTo(failedStatus);
+        assertThat(result.message()).isEqualTo(MessageUtil.USER_ALREADY_EXIST);
     }
 }
