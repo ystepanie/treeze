@@ -66,9 +66,9 @@ class LoginServiceImplTest {
     @Test
     void login() { // 객체를 전달해주는 역할만 하는 녀석을 굳이 단위테스트할 필요가 있을까..?
     }
-    
+
     @Test
-    void passwordMatch_failed() throws Exception {
+    void 패스워드검증_실패() throws Exception {
         //given
         String userPassword = "pw1";
         String encUserPassword = "encPw1";
@@ -82,7 +82,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void findUserInfoByUserId_success() throws Exception {
+    void 유저아이디로_유저정보찾기() throws Exception {
         //given
         User user = new User();
         user.setUserSeq(1);
@@ -98,7 +98,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void findUserInfoByUserId_nullException() throws Exception {
+    void 유저아이디로_정보찾았는데_널값() throws Exception {
         //given
         //when
         when(userRepository.findByUserId(loginDto.userId())).thenReturn(null);
@@ -107,7 +107,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void generateTokenInfo_success() throws Exception {
+    void 토큰생성_성공() throws Exception {
         //given
         String accessTokenValue = "accessTokenValue";
         String expiresInValue = "2024-01-01";
@@ -133,7 +133,7 @@ class LoginServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("tokenNullArguments")
-    void generateTokenInfo_nullException(LoginDto loginDto, String accessToken, String expiration) throws Exception {
+    void 토큰객체_널값(LoginDto loginDto, String accessToken, String expiration) throws Exception {
         // given
         if (loginDto != null) {
             given(accessJwtToken.generateAccessToken(any(LoginDto.class))).willReturn(accessToken);
@@ -158,7 +158,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void duplicateValidationUserId_success() throws Exception {
+    void 아이디중복_없음() throws Exception {
         //given
         given(userRepository.findByUserId(anyString())).willReturn(null);
         //when
@@ -168,7 +168,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void duplicateValidationUserId_userExist() throws Exception {
+    void 아이디중복_있음() throws Exception {
         //given
         User user = new User();
         user.setUserSeq(1);
@@ -185,7 +185,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void registUser_success() throws Exception {
+    void 유저등록_성공() throws Exception {
         //given
         User user = new User();
         user.setUserSeq(1);
@@ -202,7 +202,7 @@ class LoginServiceImplTest {
     }
 
     @Test
-    void registUser_userIsNull() throws Exception {
+    void 유저등록_실패() throws Exception {
         //given
         given(userRepository.save(any(User.class))).willReturn(null);
         //when

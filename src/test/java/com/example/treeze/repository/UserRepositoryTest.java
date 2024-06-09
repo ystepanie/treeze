@@ -28,7 +28,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByUserIdAndUserPw_success() {
+    void 아이디_패스워드로_유저정보찾기() {
         //given
         String userId = "id1";
         String userPw = "Testtest123!";
@@ -41,7 +41,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByUserIdAndUserPw_notFindUser() {
+    void 아이디_패스워드로_찾았는데_정보없음() {
         //given
         User user = new User();
         user.setUserId("id1");
@@ -58,7 +58,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByUserId_success() {
+    void 아이디로_유저정보찾기() {
         //given
         String userId = "id1";
         //when
@@ -69,7 +69,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByUserId_notFindUser() {
+    void 아이디로_찾았는데_없음() {
         //given
         User user = new User();
         user.setUserId("id1");
@@ -85,7 +85,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void save_success() {
+    void 유저정보_저장() {
         //given
         User saveUser = new User();
         saveUser.setUserId("saveUser");

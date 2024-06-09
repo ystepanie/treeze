@@ -45,13 +45,16 @@ dependencies {
 	implementation("javax.activation:activation:1.1.1")
 	// lombok
 	annotationProcessor("org.projectlombok:lombok")
-	compileOnly(	"org.projectlombok:lombok")
+	compileOnly("org.projectlombok:lombok")
 	// powermock
 	testImplementation("org.mockito:mockito-inline:3.7.7")
 	// junit5
 	testImplementation(platform("org.junit:junit-bom:5.8.2"))
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+	implementation("org.hibernate.validator:hibernate-validator:6.1.5.Final")
+	implementation ("javax.validation:validation-api:2.0.1.Final")
+	implementation("org.glassfish:javax.el:3.0.0")
 }
 
 tasks.withType<Test> {
