@@ -24,9 +24,10 @@ class LoginDtoTest {
 
     @Test
     void loginValidation_success() {
-        LoginDto loginDto  = new LoginDto("validId", "1");
+        LoginDto loginDto  = new LoginDto("", "");
 
         Set<ConstraintViolation<LoginDto>> violations = validator.validate(loginDto);
+        System.out.println("violations : " + violations);
         assertTrue(violations.isEmpty(), MessageUtil.LOGIN_SUCCESS);
     }
 }
