@@ -1,8 +1,9 @@
 package com.example.treeze.response;
 
+import java.util.List;
+
 public record ErrorResponse(
         String status,
-        int errorCode,
-        String errorMessage
+        List<String> errorMessage
 ) {
 }
