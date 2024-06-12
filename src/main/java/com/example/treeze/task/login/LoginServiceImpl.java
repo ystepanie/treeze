@@ -41,13 +41,6 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void passwordMatch(String userPassword, String encUserPassword) throws Exception {
-        if (!passwordEncoder.matches(userPassword, encUserPassword)) {
-            throw new LoginException(MessageUtil.DIFF_PASSWORD);
-        }
-    }
-
-    @Override
     public UserVo findUserInfoByUserId(String usreId) throws Exception {
         User userInfo = userRepository.findByUserId(usreId);
         if(userInfo == null){
@@ -55,6 +48,13 @@ public class LoginServiceImpl implements LoginService{
         }
         UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId(), userInfo.getUserPw());
         return userInfoVo;
+    }
+
+    @Override
+    public void passwordMatch(String userPassword, String encUserPassword) throws Exception {
+        if (!passwordEncoder.matches(userPassword, encUserPassword)) {
+            throw new LoginException(MessageUtil.DIFF_PASSWORD);
+        }
     }
 
     @Override

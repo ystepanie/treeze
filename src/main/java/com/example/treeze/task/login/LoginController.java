@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,13 +23,14 @@ public class LoginController {
     final Logger log = LogManager.getLogger(getClass());
 
     @PostMapping("/login")
-    public Response postLogin(@Valid @RequestBody LoginDto loginDto) throws Exception {
+    public ResponseEntity<Response> postLogin(@Valid @RequestBody LoginDto loginDto) throws Exception {
         Response response = loginService.login(loginDto);
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/signup")
-    public Response postSignup(@Valid @RequestBody SignupDto signupDto) throws Exception {
-        return loginService.signup(signupDto);
+    public ResponseEntity<Response> postSignup(@Valid @RequestBody SignupDto signupDto) throws Exception {
+        Response response = loginService.signup(signupDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
