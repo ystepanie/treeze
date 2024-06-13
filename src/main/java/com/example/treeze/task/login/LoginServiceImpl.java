@@ -3,7 +3,7 @@ package com.example.treeze.task.login;
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.User;
-import com.example.treeze.exception.LoginException;
+import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.repository.UserRepository;
 import com.example.treeze.response.Response;
 import com.example.treeze.security.AccessJwtToken;
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService{
     public UserVo findUserInfoByUserId(String usreId) throws Exception {
         User userInfo = userRepository.findByUserId(usreId);
         if(userInfo == null){
-            throw new LoginException(MessageUtil.USER_NOT_EXIST);
+            throw new BadRequestException(MessageUtil.USER_NOT_EXIST);
         }
         UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId(), userInfo.getUserPw());
         return userInfoVo;
@@ -53,7 +53,7 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public void passwordMatch(String userPassword, String encUserPassword) throws Exception {
         if (!passwordEncoder.matches(userPassword, encUserPassword)) {
-            throw new LoginException(MessageUtil.DIFF_PASSWORD);
+            throw new BadRequestException(MessageUtil.DIFF_PASSWORD);
         }
     }
 
@@ -63,7 +63,7 @@ public class LoginServiceImpl implements LoginService{
         String refreshToken = UUID.randomUUID().toString();
         String expiration = CalendarUtil.getAddDayDatetime(1); // 토큰 만료 시간
         if(accessToken == null || refreshToken == null || expiration == null || loginDto == null){
-            throw new LoginException(MessageUtil.TOKEN_FAILED);
+            throw new BadRequestException(MessageUtil.TOKEN_FAILED);
         }
 
         TokenVo tokenInfoVo = new TokenVo(accessToken, refreshToken, expiration);
@@ -94,7 +94,7 @@ public class LoginServiceImpl implements LoginService{
     public void duplicateValidationUserId(SignupDto signupDto) throws Exception {
         User userInfo = userRepository.findByUserId(signupDto.userId());
         if(userInfo != null){
-            throw new LoginException(MessageUtil.USER_ALREADY_EXIST);
+            throw new BadRequestException(MessageUtil.USER_ALREADY_EXIST);
         }
     }
 
@@ -106,7 +106,7 @@ public class LoginServiceImpl implements LoginService{
         user.setPhoneNumber(signupDto.phoneNumber());
         User saveUser = userRepository.save(user);
         if(saveUser == null || saveUser.getUserSeq() == 0){
-            throw new LoginException(MessageUtil.SIGNUP_FAILED);
+            throw new BadRequestException(MessageUtil.SIGNUP_FAILED);
         }
 
         UserVo userVo = UserVo.builder()

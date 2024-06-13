@@ -4,9 +4,9 @@ import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.response.Response;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/login")
+@RequiredArgsConstructor
 public class LoginController {
-    @Autowired
-    LoginService loginService;
+    private final LoginService loginService;
 
     final Logger log = LogManager.getLogger(getClass());
 

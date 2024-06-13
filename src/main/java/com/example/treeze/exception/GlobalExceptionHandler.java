@@ -23,8 +23,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(LoginException.class)
-    public ResponseEntity<ErrorResponse> handleLoginExceptions(LoginException exception) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleLoginExceptions(BadRequestException exception) {
         ErrorResponse response = new ErrorResponse(FAIL_VALUE, exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

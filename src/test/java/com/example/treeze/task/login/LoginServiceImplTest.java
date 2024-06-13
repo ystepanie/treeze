@@ -3,7 +3,7 @@ package com.example.treeze.task.login;
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.User;
-import com.example.treeze.exception.LoginException;
+import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.repository.UserRepository;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
@@ -77,8 +77,8 @@ class LoginServiceImplTest {
         when(passwordEncoder.matches(userPassword, encUserPassword)).thenReturn(false);
 
         //then
-        LoginException loginException = assertThrows(LoginException.class, () -> loginServiceImpl.passwordMatch(userPassword, encUserPassword));
-        assertEquals(loginException.getMessage(), MessageUtil.DIFF_PASSWORD);
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> loginServiceImpl.passwordMatch(userPassword, encUserPassword));
+        assertEquals(badRequestException.getMessage(), MessageUtil.DIFF_PASSWORD);
     }
 
     @Test
@@ -103,7 +103,7 @@ class LoginServiceImplTest {
         //when
         when(userRepository.findByUserId(loginDto.userId())).thenReturn(null);
         //then
-        assertThrows(LoginException.class, () -> loginServiceImpl.findUserInfoByUserId(loginDto.userId()));
+        assertThrows(BadRequestException.class, () -> loginServiceImpl.findUserInfoByUserId(loginDto.userId()));
     }
 
     @Test
@@ -138,7 +138,7 @@ class LoginServiceImplTest {
         if (loginDto != null) {
             given(accessJwtToken.generateAccessToken(any(LoginDto.class))).willReturn(accessToken);
         } else {
-            given(accessJwtToken.generateAccessToken(any())).willThrow(new LoginException(MessageUtil.TOKEN_FAILED));
+            given(accessJwtToken.generateAccessToken(any())).willThrow(new BadRequestException(MessageUtil.TOKEN_FAILED));
         }
         if (expiration != null) {
             given(CalendarUtil.getAddDayDatetime(1)).willReturn(expiration);
@@ -147,7 +147,7 @@ class LoginServiceImplTest {
         }
         //when
         //then
-        assertThrows(LoginException.class, () -> {
+        assertThrows(BadRequestException.class, () -> {
             // When
             loginServiceImpl.generateTokenInfo(loginDto);
         });
@@ -175,7 +175,7 @@ class LoginServiceImplTest {
         user.setUserId("id1");
         given(userRepository.findByUserId(signupDto.userId())).willReturn(user);
         //when
-        Exception exception = assertThrows(LoginException.class, () -> {
+        Exception exception = assertThrows(BadRequestException.class, () -> {
             loginServiceImpl.duplicateValidationUserId(signupDto);
         });
         //then
@@ -206,7 +206,7 @@ class LoginServiceImplTest {
         //given
         given(userRepository.save(any(User.class))).willReturn(null);
         //when
-        Exception exception = assertThrows(LoginException.class, () -> {
+        Exception exception = assertThrows(BadRequestException.class, () -> {
             loginServiceImpl.registUser(signupDto);
         });
         //then

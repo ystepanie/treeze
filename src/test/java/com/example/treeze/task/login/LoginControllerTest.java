@@ -2,7 +2,7 @@ package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
-import com.example.treeze.exception.LoginException;
+import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.response.ErrorResponse;
 import com.example.treeze.response.Response;
 import com.example.treeze.util.MessageUtil;
@@ -69,7 +69,7 @@ public class LoginControllerTest {
         // given
         LoginDto invalidLoginDto = new LoginDto("invalidUser", "invalidPw1!");
         String validRequestBody = objectMapper.writeValueAsString(invalidLoginDto);
-        when(loginService.login(invalidLoginDto)).thenThrow(new LoginException(MessageUtil.USER_NOT_EXIST));
+        when(loginService.login(invalidLoginDto)).thenThrow(new BadRequestException(MessageUtil.USER_NOT_EXIST));
 
         // when
         MvcResult mvcResult = mockMvc.perform(post("/v1/login/login")
