@@ -17,6 +17,6 @@ server:
   port: 8181
 openai:
   api:
-    key:
+    key: 11
     url:
 
