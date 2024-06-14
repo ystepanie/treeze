@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/chatTreeze")
 @RequiredArgsConstructor
-public class OpenaiController {
-    private final OpenaiService openaiService;
+public class OpenAiController {
+    private final OpenAiService openaiService;
 
     @PostMapping("/qna")
     public ResponseEntity<Response> postChatGpt(PromptDto promptDto) throws Exception {

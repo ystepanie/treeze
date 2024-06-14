@@ -6,7 +6,7 @@ import com.example.treeze.response.Response;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public interface OpenaiService {
+public interface OpenAiService {
     public Response chatGpt(PromptDto promptDto) throws Exception;
 
     public HttpRequest requestGptApi(PromptDto promptDto) throws Exception;
