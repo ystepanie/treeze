@@ -1,5 +1,6 @@
 package com.example.treeze.task.openai;
 
+import com.example.treeze.config.Globals;
 import com.example.treeze.dto.openai.PromptDto;
 import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.response.Response;
@@ -7,7 +8,7 @@ import com.example.treeze.util.MessageUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -17,15 +18,9 @@ import java.net.http.HttpResponse;
 
 @Service
 @RequiredArgsConstructor
-public class OpenAiServiceimpl implements OpenaiService {
-
+public class OpenAiServiceimpl implements OpenAiService {
+    private final ApplicationContext applicationContext;
     private final HttpClient httpClient;
-
-    @Value("${openai.api.key}")
-    private final String apiKey;
-
-    @Value("${openai.api.url}")
-    private final String apiUrl;
 
     @Override
     public Response chatGpt(PromptDto promptDto) throws Exception {
@@ -43,9 +38,12 @@ public class OpenAiServiceimpl implements OpenaiService {
     public HttpRequest requestGptApi(PromptDto promptDto) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("model", "text-davinci-003");
+        requestBody.put("model", "chatgpt-3.5-turbo");
         requestBody.put("prompt", promptDto.prompt());
         requestBody.put("max_tokens", 50);
+
+        String apiKey = applicationContext.getBean(Globals.class).getApiKey();
+        String apiUrl = applicationContext.getBean(Globals.class).getApiUrl();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
