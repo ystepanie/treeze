@@ -2,7 +2,8 @@ package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
-import com.example.treeze.entity.User;
+import com.example.treeze.entity.login.Token;
+import com.example.treeze.entity.login.User;
 import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.repository.UserRepository;
 import com.example.treeze.response.Response;
@@ -30,12 +31,22 @@ public class LoginServiceImpl implements LoginService{
     public Response login(LoginDto loginDto) throws Exception{
         String userId = loginDto.userId();
         String userPw = loginDto.userPw();
-
+        // 아이디, 비밀번호 조회
         UserVo userInfo = findUserInfoByUserId(userId);
         String encUserPw = userInfo.userPw();
-
+        // 패스워드 매치 확인
         passwordMatchException(userPw, encUserPw);
+
+        // 토큰 생성
         TokenVo tokenInfo = generateTokenInfo(loginDto);
+        Token token = new Token();
+        token.setRefreshToken(tokenInfo.refreshToken());
+        token.setTokenExpiration(tokenInfo.expiration());
+        token.setUseSeq(userInfo.userSeq());
+
+        // 리프레시 토큰 저장
+        insertRefreshToken(token);
+
         LoginVo loginInfo = new LoginVo(userInfo, tokenInfo);
         return new Response("success", MessageUtil.LOGIN_SUCCESS, loginInfo);
     }
@@ -43,7 +54,7 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public UserVo findUserInfoByUserId(String usreId) throws Exception {
         User userInfo = userRepository.findByUserId(usreId);
-        if(userInfo == null){
+        if(userInfo == null || userInfo.getUserSeq() == 0){
             throw new BadRequestException(MessageUtil.USER_NOT_EXIST);
         }
         UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId(), userInfo.getUserPw());
@@ -68,6 +79,15 @@ public class LoginServiceImpl implements LoginService{
 
         TokenVo tokenInfoVo = new TokenVo(accessToken, refreshToken, expiration);
         return tokenInfoVo;
+    }
+
+    @Override
+    public void insertRefreshToken(Token token) throws Exception {
+        Token tokenInfo = userRepository.saveRefreshToken(token);
+
+        if(tokenInfo == null || tokenInfo.getRefreshTokenSeq() == 0){
+            throw new BadRequestException(MessageUtil.REFRESH_TOKEN_SAVE_FAILED);
+        }
     }
 
     @Override

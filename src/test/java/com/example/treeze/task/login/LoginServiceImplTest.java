@@ -2,7 +2,8 @@ package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
-import com.example.treeze.entity.User;
+import com.example.treeze.entity.login.Token;
+import com.example.treeze.entity.login.User;
 import com.example.treeze.exception.BadRequestException;
 import com.example.treeze.repository.UserRepository;
 import com.example.treeze.security.AccessJwtToken;
@@ -147,7 +148,7 @@ class LoginServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("tokenNullArguments")
-    void 토큰객체_널값(LoginDto loginDto, String accessToken, String expiration) throws Exception {
+    void 토큰객체중_하나가_널값일떄_예외처리(LoginDto loginDto, String accessToken, String expiration) throws Exception {
         // given
         if (loginDto != null) {
             given(accessJwtToken.generateAccessToken(any(LoginDto.class))).willReturn(accessToken);
@@ -165,6 +166,31 @@ class LoginServiceImplTest {
             // When
             loginServiceImpl.generateTokenInfo(loginDto);
         });
+    }
+
+    @Test
+    void 리프레시_토큰저장_성공() throws Exception {
+        //given
+        Token token = new Token();
+        token.setRefreshTokenSeq(1);
+        given(userRepository.saveRefreshToken(token)).willReturn(token);
+        //when
+        //then
+        assertDoesNotThrow(() -> loginServiceImpl.insertRefreshToken(token));
+    }
+
+    @Test
+    void 리프레시_토큰저장시_예외() throws Exception {
+        //given
+        Token token = new Token();
+        token.setRefreshTokenSeq(0);
+        given(userRepository.saveRefreshToken(token)).willReturn(token);
+        //when
+        //then
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            loginServiceImpl.insertRefreshToken(token);
+        });
+        assertEquals(MessageUtil.REFRESH_TOKEN_SAVE_FAILED, exception.getMessage());
     }
 
     @Test

@@ -5,6 +5,7 @@ public class MessageUtil {
     // User
     public static final String LOGIN_SUCCESS = "로그인에 성공하였습니다.";
     public static final String SIGNUP_SUCCESS = "회원가입에 성공하였습니다.";
+    public static final String REFRESH_TOKEN_SAVE_SUCCESS = "리프레시 토큰 저장에 성공하였습니다.";
 
     //openai
     public static final String OPENAI_SUCCESS = "답변에 성공하였습니다.";
@@ -25,6 +26,7 @@ public class MessageUtil {
     public static final String BLANK_PASSWORD = "비밀번호를 입력해 주세요.";
     public static final String BLANK_PASSWORD_CONFIRM = "비밀번호 확인을 입력해 주세요.";
     public static final String BLANK_PHONENUMBER = "휴대폰 번호를 입력해 주세요.";
+    public static final String REFRESH_TOKEN_SAVE_FAILED = "리프레시 토큰 저장에 실패하였습니다.";
 
     //openai
     public static final String BLANK_PRMOPT = "질문을 입력해 주세요.";

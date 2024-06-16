@@ -2,6 +2,7 @@ package com.example.treeze.task.login;
 
 import com.example.treeze.dto.login.LoginDto;
 import com.example.treeze.dto.login.SignupDto;
+import com.example.treeze.entity.login.Token;
 import com.example.treeze.response.Response;
 import com.example.treeze.vo.login.TokenVo;
 import com.example.treeze.vo.login.UserVo;
@@ -14,6 +15,8 @@ public interface LoginService {
     public UserVo findUserInfoByUserId(String userId) throws Exception;
 
     public TokenVo generateTokenInfo(LoginDto loginDto) throws Exception;
+
+    public void insertRefreshToken(Token token) throws Exception;
 
     public Response signup(SignupDto signupDto) throws Exception;
 
