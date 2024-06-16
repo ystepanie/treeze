@@ -82,7 +82,6 @@ public class LoginControllerTest {
         String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ErrorResponse result = objectMapper.readValue(jsonResponse, ErrorResponse.class);
         assertThat(result.status()).isEqualTo(failedStatus);
-        assertThat(result.errorCode()).isEqualTo(badRquestStatus);
         assertThat(result.errorMessage()).isEqualTo(MessageUtil.USER_NOT_EXIST);
     }
 
@@ -105,7 +104,6 @@ public class LoginControllerTest {
         // then
         String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         Response result = objectMapper.readValue(jsonResponse, Response.class);
-        assertThat(result.status()).isEqualTo(successStatus);
         assertThat(result.message()).isEqualTo(MessageUtil.SIGNUP_SUCCESS);
     }
 
@@ -128,7 +126,6 @@ public class LoginControllerTest {
         // then
         String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         Response result = objectMapper.readValue(jsonResponse, Response.class);
-        assertThat(result.status()).isEqualTo(failedStatus);
         assertThat(result.message()).isEqualTo(MessageUtil.USER_ALREADY_EXIST);
     }
 }

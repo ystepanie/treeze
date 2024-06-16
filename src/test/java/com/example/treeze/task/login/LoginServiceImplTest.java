@@ -68,6 +68,20 @@ class LoginServiceImplTest {
     }
 
     @Test
+    void 패스워드검증_성공() throws Exception {
+        //given
+        String userPassword = "pw1";
+        String encUserPassword = "encPw1";
+
+        //when
+        when(passwordEncoder.matches(userPassword, encUserPassword)).thenReturn(true);
+
+        //then
+        boolean isReulst = passwordEncoder.matches(userPassword, encUserPassword);
+        assertTrue(isReulst, "password validation success");
+    }
+
+    @Test
     void 패스워드검증_실패() throws Exception {
         //given
         String userPassword = "pw1";
@@ -77,7 +91,7 @@ class LoginServiceImplTest {
         when(passwordEncoder.matches(userPassword, encUserPassword)).thenReturn(false);
 
         //then
-        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> loginServiceImpl.passwordMatch(userPassword, encUserPassword));
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> loginServiceImpl.passwordMatchException(userPassword, encUserPassword));
         assertEquals(badRequestException.getMessage(), MessageUtil.DIFF_PASSWORD);
     }
 

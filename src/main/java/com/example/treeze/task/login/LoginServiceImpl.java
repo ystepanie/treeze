@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService{
         UserVo userInfo = findUserInfoByUserId(userId);
         String encUserPw = userInfo.userPw();
 
-        passwordMatch(userPw, encUserPw);
+        passwordMatchException(userPw, encUserPw);
         TokenVo tokenInfo = generateTokenInfo(loginDto);
         LoginVo loginInfo = new LoginVo(userInfo, tokenInfo);
         return new Response("success", MessageUtil.LOGIN_SUCCESS, loginInfo);
@@ -51,7 +51,7 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void passwordMatch(String userPassword, String encUserPassword) throws Exception {
+    public void passwordMatchException(String userPassword, String encUserPassword) throws Exception {
         if (!passwordEncoder.matches(userPassword, encUserPassword)) {
             throw new BadRequestException(MessageUtil.DIFF_PASSWORD);
         }

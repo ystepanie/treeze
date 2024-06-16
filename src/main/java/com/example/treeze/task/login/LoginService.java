@@ -9,7 +9,7 @@ import com.example.treeze.vo.login.UserVo;
 public interface LoginService {
     public Response login(LoginDto loginDto) throws Exception;
 
-    public void passwordMatch(String userPassword, String encUserPassword) throws Exception;
+    public void passwordMatchException(String userPassword, String encUserPassword) throws Exception;
 
     public UserVo findUserInfoByUserId(String userId) throws Exception;
 
