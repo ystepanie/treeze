@@ -5,7 +5,8 @@ import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.login.Token;
 import com.example.treeze.entity.login.User;
 import com.example.treeze.exception.BadRequestException;
-import com.example.treeze.repository.UserRepository;
+import com.example.treeze.repository.login.TokenRepository;
+import com.example.treeze.repository.login.UserRepository;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
 import com.example.treeze.util.MessageUtil;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.*;
 class LoginServiceImplTest {
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private TokenRepository tokenRepository;
 
     @Mock
     private AccessJwtToken accessJwtToken;
@@ -173,7 +177,7 @@ class LoginServiceImplTest {
         //given
         Token token = new Token();
         token.setRefreshTokenSeq(1);
-        given(userRepository.saveRefreshToken(token)).willReturn(token);
+        given(tokenRepository.save(token)).willReturn(token);
         //when
         //then
         assertDoesNotThrow(() -> loginServiceImpl.insertRefreshToken(token));
@@ -184,7 +188,7 @@ class LoginServiceImplTest {
         //given
         Token token = new Token();
         token.setRefreshTokenSeq(0);
-        given(userRepository.saveRefreshToken(token)).willReturn(token);
+        given(tokenRepository.save(token)).willReturn(token);
         //when
         //then
         Exception exception = assertThrows(BadRequestException.class, () -> {

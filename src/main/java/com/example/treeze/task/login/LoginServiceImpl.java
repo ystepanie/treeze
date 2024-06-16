@@ -5,7 +5,8 @@ import com.example.treeze.dto.login.SignupDto;
 import com.example.treeze.entity.login.Token;
 import com.example.treeze.entity.login.User;
 import com.example.treeze.exception.BadRequestException;
-import com.example.treeze.repository.UserRepository;
+import com.example.treeze.repository.login.TokenRepository;
+import com.example.treeze.repository.login.UserRepository;
 import com.example.treeze.response.Response;
 import com.example.treeze.security.AccessJwtToken;
 import com.example.treeze.util.CalendarUtil;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class LoginServiceImpl implements LoginService{
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final AccessJwtToken accessJwtToken;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -83,7 +85,7 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public void insertRefreshToken(Token token) throws Exception {
-        Token tokenInfo = userRepository.saveRefreshToken(token);
+        Token tokenInfo = tokenRepository.save(token);
 
         if(tokenInfo == null || tokenInfo.getRefreshTokenSeq() == 0){
             throw new BadRequestException(MessageUtil.REFRESH_TOKEN_SAVE_FAILED);

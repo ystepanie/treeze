@@ -1,6 +1,7 @@
 package com.example.treeze.repository;
 
 import com.example.treeze.entity.login.User;
+import com.example.treeze.repository.login.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
