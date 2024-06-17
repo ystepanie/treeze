@@ -176,7 +176,7 @@ class LoginServiceImplTest {
     void 리프레시_토큰저장_성공() throws Exception {
         //given
         Token token = new Token();
-        token.setRefreshTokenSeq(1);
+        token.setUserSeq(1);
         given(tokenRepository.save(token)).willReturn(token);
         //when
         //then
@@ -187,7 +187,7 @@ class LoginServiceImplTest {
     void 리프레시_토큰저장시_예외() throws Exception {
         //given
         Token token = new Token();
-        token.setRefreshTokenSeq(0);
+        token.setUserSeq(0);
         given(tokenRepository.save(token)).willReturn(token);
         //when
         //then

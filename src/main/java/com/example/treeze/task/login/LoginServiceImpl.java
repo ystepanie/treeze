@@ -42,9 +42,9 @@ public class LoginServiceImpl implements LoginService{
         // 토큰 생성
         TokenVo tokenInfo = generateTokenInfo(loginDto);
         Token token = new Token();
+        token.setUserSeq(userInfo.userSeq());
         token.setRefreshToken(tokenInfo.refreshToken());
         token.setTokenExpiration(tokenInfo.expiration());
-        token.setUseSeq(userInfo.userSeq());
 
         // 리프레시 토큰 저장
         insertRefreshToken(token);
@@ -84,12 +84,12 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void insertRefreshToken(Token token) throws Exception {
-        Token tokenInfo = tokenRepository.save(token);
-
-        if(tokenInfo == null || tokenInfo.getRefreshTokenSeq() == 0){
-            throw new BadRequestException(MessageUtil.REFRESH_TOKEN_SAVE_FAILED);
-        }
+    public void insertRefreshToken(Token token) throws BadRequestException {
+        Long userSeq = token.getUserSeq();
+        String refreshToken = token.getRefreshToken();
+        String tokenExpiration = token.getTokenExpiration();
+        tokenRepository.upsert(userSeq, refreshToken, tokenExpiration);
+        //todo 예외처리에 관해
     }
 
     @Override

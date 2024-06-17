@@ -11,10 +11,7 @@ import lombok.Setter;
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int refreshTokenSeq;
-
-    @Column(name = "user_seq", nullable = false)
-    private int useSeq;
+    private Long userSeq;
 
     @Column(name = "refresh_token", length = 100, nullable = false)
     private String refreshToken;

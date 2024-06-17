@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,8 +38,6 @@ public class LoginControllerTest {
 
     private static final String successStatus = "success";
     private static final String failedStatus = "failed";
-    private static final int badRquestStatus = HttpStatus.BAD_REQUEST.value();
-
 
     @Test
     void 로그인_성공() throws Exception {
@@ -57,7 +54,7 @@ public class LoginControllerTest {
                         .content(validRequestBody))
                 .andExpect(status().isOk())
                 .andReturn();
-
+        // then
         String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         Response result = objectMapper.readValue(jsonResponse, Response.class);
         assertThat(result.status()).isEqualTo(successStatus);
