@@ -11,6 +11,10 @@ public class MessageUtil {
     public static final String OPENAI_SUCCESS = "답변에 성공하였습니다.";
 
     //failed
+    // token
+    public static final String TOKEN_NOT_EXIST = "토큰 정보가 존재하지 않습니다.";
+    public static final String TOKEN_EXPIRATION = "토큰이 만료되었습니다.";
+
     // User
     public static final String USER_NOT_EXIST = "아이디, 비밀번호를 확인해 주세요.";
     public static final String USER_ALREADY_EXIST = "이미 등록된 회원입니다.";
