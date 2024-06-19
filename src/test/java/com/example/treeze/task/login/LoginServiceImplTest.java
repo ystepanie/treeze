@@ -104,7 +104,7 @@ class LoginServiceImplTest {
     void 유저아이디로_유저정보찾기() throws Exception {
         //given
         User user = new User();
-        user.setUserSeq(1);
+        user.setUserSeq(1L);
         user.setUserId("id1");
 
         when(userRepository.findByUserId(loginDto.userId())).thenReturn(user);
@@ -176,7 +176,7 @@ class LoginServiceImplTest {
     void 리프레시_토큰저장_성공() throws Exception {
         //given
         Token token = new Token();
-        token.setUserSeq(1);
+        token.setUserSeq(1L);
         given(tokenRepository.save(token)).willReturn(token);
         //when
         //then
@@ -187,7 +187,7 @@ class LoginServiceImplTest {
     void 리프레시_토큰저장시_예외() throws Exception {
         //given
         Token token = new Token();
-        token.setUserSeq(0);
+        token.setUserSeq(0L);
         given(tokenRepository.save(token)).willReturn(token);
         //when
         //then
@@ -215,7 +215,7 @@ class LoginServiceImplTest {
     void 아이디중복_있음() throws Exception {
         //given
         User user = new User();
-        user.setUserSeq(1);
+        user.setUserSeq(1L);
         user.setUserId("id1");
         given(userRepository.findByUserId(signupDto.userId())).willReturn(user);
         //when
@@ -232,7 +232,7 @@ class LoginServiceImplTest {
     void 유저등록_성공() throws Exception {
         //given
         User user = new User();
-        user.setUserSeq(1);
+        user.setUserSeq(1L);
         user.setUserId(signupDto.userId());
         user.setUserPw(signupDto.userPw());
         user.setPhoneNumber(signupDto.phoneNumber());

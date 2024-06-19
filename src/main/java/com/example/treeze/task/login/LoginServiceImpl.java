@@ -56,7 +56,7 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public UserVo findUserInfoByUserId(String usreId) throws Exception {
         User userInfo = userRepository.findByUserId(usreId);
-        if(userInfo == null || userInfo.getUserSeq() == 0){
+        if(userInfo == null){
             throw new BadRequestException(MessageUtil.USER_NOT_EXIST);
         }
         UserVo userInfoVo = new UserVo(userInfo.getUserSeq(), userInfo.getUserId(), userInfo.getUserPw());
@@ -88,6 +88,9 @@ public class LoginServiceImpl implements LoginService{
         Long userSeq = token.getUserSeq();
         String refreshToken = token.getRefreshToken();
         String tokenExpiration = token.getTokenExpiration();
+        if(userSeq == null || userSeq == 0L) {
+            throw new BadRequestException(MessageUtil.USER_NOT_EXIST);
+        }
         tokenRepository.upsert(userSeq, refreshToken, tokenExpiration);
         //todo 예외처리에 관해
     }
