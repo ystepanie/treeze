@@ -48,7 +48,7 @@ public class OpenAiServiceimpl implements OpenAiService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
+                .header("OpenAiKey", "Bearer " + apiKey)
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
                 .build();
 

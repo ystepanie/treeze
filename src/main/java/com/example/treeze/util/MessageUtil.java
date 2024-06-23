@@ -13,7 +13,7 @@ public class MessageUtil {
     //failed
     // token
     public static final String TOKEN_NOT_EXIST = "토큰 정보가 존재하지 않습니다.";
-    public static final String TOKEN_EXPIRATION = "토큰이 만료되었습니다.";
+    public static final String TOKEN_VALIDATION = "토큰 검증에 실패하였습니다.";
 
     // User
     public static final String USER_NOT_EXIST = "아이디, 비밀번호를 확인해 주세요.";

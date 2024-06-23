@@ -28,4 +28,10 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(FAIL_VALUE, exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(SpringSecurityException.class)
+    public ResponseEntity<ErrorResponse> handleSecurityExceptions(SpringSecurityException exception) {
+        ErrorResponse response = new ErrorResponse(FAIL_VALUE, exception.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -36,7 +36,9 @@ dependencies {
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	testImplementation("org.springframework.security:spring-security-test")
 	// JWT Token
-	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5") // JJWT API
+	implementation("io.jsonwebtoken:jjwt-impl:0.11.5") // JJWT implementation
+	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5") // JJWT with Jackson JSON Processor
 	// Model mapper
 	implementation("org.modelmapper:modelmapper:3.0.0")
 	// xml bind

@@ -28,6 +28,9 @@ public class Globals {
     private String apiKey;
     private String apiUrl;
 
+    private String jwtSecretKey;
+    private String jwtSubjectName;
+
     @Autowired
     @Getter(AccessLevel.NONE)
     private ResourceLoader resourceLoader;
@@ -46,6 +49,9 @@ public class Globals {
 
             apiKey = getValue("openai.api.key");
             apiUrl = getValue("openai.api.url");
+
+            jwtSecretKey = getValue("jwt.secretKey");
+            jwtSubjectName = getValue("jwt.subjectName");
         } catch (Exception e) {
             log.debug("resourcePath : {} 파일을 불러오는 중 오류가 발생했습니다.", resourcePath);
             log.error("error", e);

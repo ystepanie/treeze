@@ -9,10 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/login")
@@ -31,6 +28,12 @@ public class LoginController {
     @PostMapping("/signup")
     public ResponseEntity<Response> postSignup(@Valid @RequestBody SignupDto signupDto) throws Exception {
         Response response = loginService.signup(signupDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<Response> getTest() throws Exception {
+        Response response = new Response("success", "test success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
