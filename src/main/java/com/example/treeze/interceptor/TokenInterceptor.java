@@ -14,6 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @RequiredArgsConstructor
 public class TokenInterceptor implements HandlerInterceptor {
+
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final AccessJwtToken accessJwtToken;
 
@@ -28,7 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     private boolean IsAccessTokenExist(String accessToken) throws Exception {
         if (StringUtils.isEmpty(accessToken)) { // token 빈 값 확인
-            log.error("accessJwtToken null!!!!!!");
+            System.out.println("accessJwtToken null!!!!!!");
             throw new SpringSecurityException(MessageUtil.TOKEN_NOT_EXIST, HttpStatus.INTERNAL_SERVER_ERROR);
         } else { // 빈 값도 아닐 떄
             return true;
