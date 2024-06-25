@@ -23,20 +23,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers("/v1/login/signup", "/v1/login/login").permitAll()
-                    .anyRequest().authenticated())
-            .logout(logout -> logout.permitAll());  // 로그아웃도 모든 사용자에게 허용
+                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+                .authorizeRequests()
+                .anyRequest().permitAll();
         return http.build();
-    }
-
-    // API 호출 시 도메인 허용
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*") // 모든 도메인을 허용
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS");
     }
 
     @Bean
@@ -54,9 +44,12 @@ public class WebConfig implements WebMvcConfigurer {
         return new AccessJwtToken(globals);
     }
 
-    @Bean
-    public TokenInterceptor tokenInterceptor(AccessJwtToken accessJwtToken) {
-        return new TokenInterceptor(accessJwtToken);
+    // API 호출 시 도메인 허용
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*") // 모든 도메인을 허용
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS");
     }
 
     @Override
@@ -65,6 +58,7 @@ public class WebConfig implements WebMvcConfigurer {
         List<String> excludeList = new ArrayList<String>();
         excludeList.add("/v1/login/login");
         excludeList.add("/v1/login/signup");
+//        excludeList.add("/v1/login/test");
         excludeList.add("/error");
 
         // AccessJwtToken 빈 생성
