@@ -48,13 +48,16 @@ public class AccessJwtToken {
             Date expiredTokenDate = new Date();
             expiredTokenDate.setTime(expiredTokenDate.getTime() + AddTokenTime);
 
+            String key = globals.getJwtSecretKey();
+            SecretKey secretKey = Keys.hmacShaKeyFor(key.getBytes("UTF-8"));
+
             return Jwts.builder()
                     .setHeader(headers)
                     .setClaims(claims)
                     .setExpiration(expiredTokenDate)
                     .setSubject(globals.getJwtSubjectName())
                     .setIssuedAt(new Date())
-                    .signWith(SignatureAlgorithm.HS256, globals.getJwtSecretKey())
+                    .signWith(secretKey, SignatureAlgorithm.HS512)
                     .compact();
         } catch (Exception e) {
             e.printStackTrace();
