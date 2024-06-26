@@ -32,6 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SpringSecurityException.class)
     public ResponseEntity<ErrorResponse> handleSecurityExceptions(SpringSecurityException exception) {
         ErrorResponse response = new ErrorResponse(FAIL_VALUE, exception.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpStatus errorCode = exception.getCode();
+        return new ResponseEntity<>(response, errorCode);
     }
 }

@@ -92,6 +92,7 @@ public class LoginServiceImpl implements LoginService{
             throw new BadRequestException(MessageUtil.USER_NOT_EXIST);
         }
         tokenRepository.upsert(userSeq, refreshToken, tokenExpiration);
+        token.setRefreshToken(""); //db에서 관리하므로 빈값으로 설정
         //todo 예외처리에 관해
     }
 

@@ -39,10 +39,10 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     private boolean isAccessTokenValidation(String accessToken) throws Exception {
         if(accessJwtToken.isTokenValidation(accessToken)) { // access token 만료
-            log.error("accessJwtToken validation null!!!!!!");
-            return false;
-        } else {
             return true;
+        } else {
+            log.error("accessJwtToken validation null!!!!!!");
+            throw new SpringSecurityException(MessageUtil.TOKEN_VALIDATION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -45,6 +45,7 @@ public class AccessJwtToken {
             claims.put("dateTime", CalendarUtil.getCurrentDate());
 
             int AddTokenTime = 60000; //1hour
+
             Date expiredTokenDate = new Date();
             expiredTokenDate.setTime(expiredTokenDate.getTime() + AddTokenTime);
 
@@ -104,11 +105,12 @@ public class AccessJwtToken {
                     .getBody();
         } catch (WeakKeyException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            throw new SpringSecurityException(MessageUtil.TOKEN_VALIDATION, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ExpiredJwtException e) {
             e.printStackTrace();
             throw new SpringSecurityException(MessageUtil.TOKEN_VALIDATION, HttpStatus.UNAUTHORIZED);
         }
+
+        return null;
     }
 
 }

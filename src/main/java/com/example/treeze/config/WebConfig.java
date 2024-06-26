@@ -44,6 +44,11 @@ public class WebConfig implements WebMvcConfigurer {
         return new AccessJwtToken(globals);
     }
 
+    @Bean
+    public TokenInterceptor tokenInterceptor(AccessJwtToken accessJwtToken) {
+        return new TokenInterceptor(accessJwtToken);
+    }
+
     // API 호출 시 도메인 허용
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -58,16 +63,10 @@ public class WebConfig implements WebMvcConfigurer {
         List<String> excludeList = new ArrayList<String>();
         excludeList.add("/v1/login/login");
         excludeList.add("/v1/login/signup");
-//        excludeList.add("/v1/login/test");
         excludeList.add("/error");
 
-        // AccessJwtToken 빈 생성
-        AccessJwtToken accessJwtToken = accessJwtToken(new Globals());
-        // TokenInterceptor 인스턴스 생성
-        TokenInterceptor tokenInterceptor = new TokenInterceptor(accessJwtToken);
-
-        registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/v1/**")
+        registry.addInterceptor(tokenInterceptor(accessJwtToken(globals())))
+                .addPathPatterns("/**")
                 .excludePathPatterns(excludeList);
     }
 }
